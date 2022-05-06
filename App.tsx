@@ -9,8 +9,6 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import HomeScreen from './src/screen/HomeScreen';
-import OnboardingScreen from './src/screen/OnboardingScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -32,12 +30,10 @@ const App = () => {
     });
   }, []);
 
-  console.log(onboard);
-
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        {onboard == null || onboard == 'false' ? (
+        {onboard == null || onboard == false ? (
           <Stack.Screen
             name="app-onboarding"
             component={OnboardingStackNavigation}

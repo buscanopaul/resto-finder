@@ -11,7 +11,7 @@ const MainStackNavigation = (props: Props) => {
   return (
     <>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="main" component={HomeScreen} />
+        <Stack.Screen name="home" component={HomeScreen} />
       </Stack.Navigator>
     </>
   );

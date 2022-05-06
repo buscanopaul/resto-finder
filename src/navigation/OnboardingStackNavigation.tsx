@@ -14,7 +14,7 @@ const OnboardingStackNavigation = (props: Props) => {
     <>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="onboarding" component={OnboardingScreen} />
-        <Stack.Screen name="main" component={HomeScreen} />
+        <Stack.Screen name="main" component={MainStackNavigation} />
       </Stack.Navigator>
     </>
   );
