@@ -110,12 +110,12 @@ const FoodListScreen = (props: Props) => {
               </Text>
               <AntDesign
                 name="minuscircleo"
-                style={{color: 'red', fontSize: 20}}
+                style={{color: '#f4953e', fontSize: 20}}
               />
               <Text>1</Text>
               <AntDesign
                 name="pluscircleo"
-                style={{color: 'red', fontSize: 20}}
+                style={{color: '#f4953e', fontSize: 20}}
               />
             </View>
             <TouchableOpacity

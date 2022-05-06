@@ -24,14 +24,16 @@ const HomeScreen = (props: Props) => {
   }, []);
 
   return (
-    <SafeAreaView style={tw`bg-white dark:bg-black flex flex-1`}>
+    <View style={tw`bg-white dark:bg-black flex flex-1`}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <HomeDiscover />
+        <SafeAreaView>
+          <HomeDiscover />
+        </SafeAreaView>
         <HomeSearch />
         <HomeCategory />
         <HomeList />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
