@@ -26,7 +26,7 @@ const OnboardingScreen = (props: Props) => {
   return (
     <SafeAreaView>
       <View style={tw`px-6`}>
-        <View style={tw`w-full h-3/5 bg-orange-400 p-5 pt-7`}>
+        <View style={[tw`w-full h-3/5 p-5 pt-7`, {backgroundColor: '#f4953e'}]}>
           <Text style={tw`text-xl text-white`}>
             We make it simple to find the food you crave.
             <Text style={tw`font-bold`}> Search your desire foods.</Text>
@@ -40,7 +40,10 @@ const OnboardingScreen = (props: Props) => {
           <Text style={tw`text-5xl font-extralight`}>Find your</Text>
           <Text style={tw`text-4xl font-bold`}>Favourite Foods</Text>
           <TouchableOpacity
-            style={tw`bg-orange-400 w-40 p-5 justify-center flex flex-row mt-5`}
+            style={[
+              tw`w-40 p-5 justify-center flex flex-row mt-5`,
+              {backgroundColor: '#f4953e'},
+            ]}
             onPress={hanldeHome}>
             <Text style={tw`text-white font-bold`}>Get started</Text>
           </TouchableOpacity>

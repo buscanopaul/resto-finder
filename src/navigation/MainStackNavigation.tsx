@@ -30,6 +30,7 @@ const MainStackNavigation = (props: Props) => {
             headerStyle: {
               backgroundColor: '#f4953e',
             },
+            headerShadowVisible: false,
           }}
         />
         <Stack.Screen
@@ -44,6 +45,7 @@ const MainStackNavigation = (props: Props) => {
             headerStyle: {
               backgroundColor: '#f4953e',
             },
+            headerShadowVisible: false,
           }}
         />
       </Stack.Navigator>
