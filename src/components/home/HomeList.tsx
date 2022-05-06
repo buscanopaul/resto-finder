@@ -8,6 +8,7 @@ import {
 import React from 'react';
 import tw from 'twrnc';
 import LinearGradient from 'react-native-linear-gradient';
+import {useNavigation} from '@react-navigation/native';
 
 type Props = {};
 
@@ -55,11 +56,19 @@ const DATA = [
 ];
 
 const HomeList = (props: Props) => {
+  const navigation = useNavigation();
+
+  const handleFoodList = (title: String) => {
+    navigation.navigate('foodlist', {title: title});
+  };
+
   const renderRestaurants = ({item}) => {
     return (
-      <TouchableOpacity style={tw`rounded-lg pb-8`}>
+      <TouchableOpacity
+        onPress={() => handleFoodList(item.title)}
+        style={tw`rounded-lg pb-8`}>
         <ImageBackground
-          style={tw`h-70 rounded-full`}
+          style={tw`h-70 rounded-lg`}
           imageStyle={{borderRadius: 10}}
           source={item.imageURL}
           resizeMode="cover">
