@@ -33,6 +33,7 @@ const HomeSearch = (props: Props) => {
       <TextInput
         style={tw`bg-white h-12 p-3 rounded-md`}
         onChangeText={text => handleSearch(text)}
+        autoCorrect={false}
         placeholder="search"
       />
     </View>
