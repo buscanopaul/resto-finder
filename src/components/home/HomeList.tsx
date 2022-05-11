@@ -5,58 +5,46 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import tw from 'twrnc';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  businessesSelector,
+  getRestaurantsAsync,
+  loadingHomeSelector,
+} from '../../redux/slice/homeSlice';
+import {isNumber} from '../../helpers/CheckRating';
+import {Distance} from '../../helpers/DistanceHelper';
+import Geolocation from '@react-native-community/geolocation';
+import HomePreloading from '../preloading/HomePreloading';
 
 type Props = {};
 
-const DATA = [
-  {
-    id: '1',
-    title: 'S&R',
-    category: 'Pizza',
-    distance: '15 Min',
-    rating: '5.0',
-    imageURL: {
-      uri: 'https://images.deliveryhero.io/image/fd-ph/LH/q3fx-hero.jpg',
-    },
-  },
-  {
-    id: '2',
-    title: 'Greenwich',
-    category: 'Pizza',
-    distance: '45 Min',
-    rating: '4.0',
-    imageURL: {
-      uri: 'https://cdn.phonebooky.com/blog/wp-content/uploads/2020/07/07141325/Pizza-and-Lasagna-Trio-from-Greenwich.jpg',
-    },
-  },
-  {
-    id: '3',
-    title: 'Jabee',
-    category: 'Chicken',
-    distance: '5 Min',
-    rating: '4.3',
-    imageURL: {
-      uri: 'https://qsrmedia.asia/sites/default/files/styles/opengraph/public/2021-05/jollibee_bucket_3.png',
-    },
-  },
-  {
-    id: '4',
-    title: 'McDonalds',
-    category: 'Pasta',
-    distance: '30 Min',
-    rating: '3.9',
-    imageURL: {
-      uri: 'https://cdn1.matadornetwork.com/blogs/1/2018/09/McDonalds-menu-items-from-around-the-world-1200x900.jpeg',
-    },
-  },
-];
-
 const HomeList = (props: Props) => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const businesses = useSelector(businessesSelector);
+  const loadingHome = useSelector(loadingHomeSelector);
+
+  useEffect(() => {
+    const location = async () => {
+      const data = Geolocation.getCurrentPosition(info => {
+        dispatch(
+          getRestaurantsAsync({
+            searchTerm: 'restaurant',
+            latitude: info.coords.latitude,
+            longitude: info.coords.longitude,
+          }),
+        );
+      });
+    };
+
+    location();
+  }, []);
+
+  console.log('businesses', businesses);
 
   const handleFoodList = (title: String) => {
     navigation.navigate('foodlist', {title: title});
@@ -65,12 +53,12 @@ const HomeList = (props: Props) => {
   const renderRestaurants = ({item}) => {
     return (
       <TouchableOpacity
-        onPress={() => handleFoodList(item.title)}
+        onPress={() => handleFoodList(item.name)}
         style={tw`rounded-lg pb-8`}>
         <ImageBackground
-          style={tw`h-70 rounded-lg`}
+          style={tw`h-70 rounded-lg bg-gray-300`}
           imageStyle={{borderRadius: 10}}
-          source={item.imageURL}
+          source={item.image_url ? {uri: item.image_url} : null}
           resizeMode="cover">
           <LinearGradient
             style={tw`flex flex-col justify-between p-4 h-full rounded-lg`}
@@ -78,16 +66,26 @@ const HomeList = (props: Props) => {
             start={{x: 0, y: 1}}
             end={{x: 0, y: 0}}>
             <View
-              style={tw`bg-white w-25 flex flex-row justify-center p-2 rounded-full px-3`}>
-              <Text style={tw`text-black`}>Category</Text>
+              style={[
+                tw`bg-white flex flex-row justify-center p-2 rounded-full px-5`,
+                {alignSelf: 'flex-start'},
+              ]}>
+              <Text style={tw`text-black`}>
+                {item.location.address2 == '' || item.location.address2 == null
+                  ? item.location.city
+                  : item.location.address2}
+              </Text>
             </View>
-
             <View>
               <Text style={tw`text-xl text-white font-bold pb-1`}>
-                {item.title}
+                {item.name}
               </Text>
               <Text style={tw`text-white`}>
-                {item.distance} | {item.rating} Rating
+                {Distance(item.distance)} km |{' '}
+                {isNumber(item.rating)
+                  ? item.rating + '.0 '
+                  : item.rating + ' '}
+                Rating
               </Text>
             </View>
           </LinearGradient>
@@ -98,8 +96,9 @@ const HomeList = (props: Props) => {
 
   return (
     <View style={tw`px-6`}>
+      {loadingHome && <HomePreloading />}
       <FlatList
-        data={DATA}
+        data={businesses}
         renderItem={renderRestaurants}
         keyExtractor={item => item.id}
       />
