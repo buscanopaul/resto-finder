@@ -4,6 +4,9 @@ import {
   FlatList,
   TouchableOpacity,
   ImageBackground,
+  Platform,
+  Alert,
+  PermissionsAndroid,
 } from 'react-native';
 import React, {useEffect} from 'react';
 import tw from 'twrnc';
@@ -27,24 +30,81 @@ const HomeList = (props: Props) => {
   const navigation = useNavigation();
   const businesses = useSelector(businessesSelector);
   const loadingHome = useSelector(loadingHomeSelector);
+  let watchID;
 
   useEffect(() => {
-    const location = async () => {
-      const data = Geolocation.getCurrentPosition(info => {
+    const requestLocationPermission = async () => {
+      if (Platform.OS === 'ios') {
+        getOnTimeLocation();
+        subscribeLocation();
+      } else {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Location Access Required',
+              message: 'This App needs to Access your location',
+            },
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            getOnTimeLocation();
+            subscribeLocation();
+          } else {
+            Alert.alert('Permission Denied.');
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    requestLocationPermission();
+    return () => {
+      Geolocation.clearWatch(watchID);
+    };
+  }, []);
+
+  const getOnTimeLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
         dispatch(
           getRestaurantsAsync({
             searchTerm: 'restaurant',
-            latitude: info.coords.latitude,
-            longitude: info.coords.longitude,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
           }),
         );
-      });
-    };
+      },
+      error => {
+        console.log(error.message);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 30000,
+        maximumAge: 1000,
+      },
+    );
+  };
 
-    location();
-  }, []);
-
-  console.log('businesses', businesses);
+  const subscribeLocation = () => {
+    watchID = Geolocation.watchPosition(
+      position => {
+        dispatch(
+          getRestaurantsAsync({
+            searchTerm: 'restaurant',
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          }),
+        );
+      },
+      error => {
+        console.log(error.message);
+      },
+      {
+        enableHighAccuracy: false,
+        maximumAge: 1000,
+      },
+    );
+  };
 
   const handleFoodList = (title: String) => {
     navigation.navigate('foodlist', {title: title});
